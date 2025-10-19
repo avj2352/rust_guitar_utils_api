@@ -1,0 +1,9 @@
+# ignore folders
+/target
+/.vscode/
+/.idea/
+
+# ignore files
+.DS_Store
+**/.DS_Store
+
