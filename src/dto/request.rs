@@ -1,6 +1,4 @@
 use serde::{Deserialize, Serialize};
-use actix_multipart::form::{MultipartForm, tempfile::TempFile, text::Text};
-use utoipa::ToSchema;
 
 // Create User Request
 #[derive(Serialize, Deserialize, utoipa::ToSchema)]
@@ -31,14 +29,4 @@ pub struct UserQueryParams {
 pub struct UserFilterQueryParams {
     #[schema(example = "some")]
     pub filter: Option<String>,
-}
-
-#[derive(Debug, MultipartForm, ToSchema)]
-pub struct FileUploadForm {
-    /// A text field
-    #[schema(value_type = String)]
-    pub other_param: Text<String>,
-    /// The file to upload
-    #[schema(value_type = String, format = Binary)]
-    pub file: TempFile,
 }

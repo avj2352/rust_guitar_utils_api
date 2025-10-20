@@ -34,6 +34,9 @@ async fn health_check() -> impl Responder {
     path = "/greet/{name}",
     responses(
         (status = 200, description = "Health check which accepts a uri value", body = AppResponse)
+    ),
+    params(
+        ("name" = String, Path, description = "Name to greet")
     )
 )]
 #[get("/greet/{name}")]
