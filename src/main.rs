@@ -67,7 +67,7 @@ struct ApiDoc;
 // Scalar Documentation Endpoint
 #[get("/docs")]
 async fn docs() -> impl Responder {
-    scalar_actix::ActixDocumentation::new("User Management API", "/openapi.json")
+    scalar_actix::ActixDocumentation::new("Rust Guitar Utils Webservice", "/openapi.json")
         .theme(scalar_doc::Theme::Purple)
         .service()
 }
@@ -92,6 +92,9 @@ async fn openapi_yaml() -> impl Responder {
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    let host = "127.0.0.1";
+    let port = 8080;
+    println!("server is running at: http://{}:{}/docs", &host, &port);
     HttpServer::new(|| {
         App::new()
             // endpoints
@@ -102,7 +105,7 @@ async fn main() -> std::io::Result<()> {
             .service(openapi_json)
             .service(openapi_yaml)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind((host, port))?
     .run()
     .await
 }
