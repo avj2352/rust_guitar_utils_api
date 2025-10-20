@@ -1,5 +1,6 @@
 mod dto;
 mod models;
+mod services;
 mod util;
 
 // ..web service
@@ -10,6 +11,7 @@ use utoipa::OpenApi;
 // ..custom
 use crate::dto::request::CreateGuitarSVGRequest;
 use crate::dto::response::{AppResponse, GuitarSVGResponse, HealthResponse, UserResponse};
+use crate::services::chord::create_svg;
 
 // Health Check Endpoint
 #[utoipa::path(
@@ -56,14 +58,15 @@ async fn greet(req: HttpRequest) -> impl Responder {
     path = "/guitar/utils/gen_svg",
     request_body = CreateGuitarSVGRequest,
     responses(
-    (status = 201, description = "Generate Guitar SVG", body = GuitarSVGResponse)
+    (status = 201, description = "Generate Guitar SVG", body = AppResponse)
     )
 )]
 #[post("/guitar/utils/gen_svg")]
 async fn gen_svg_chord(payload: web::Json<CreateGuitarSVGRequest>) -> impl Responder {
-    let svg_response = GuitarSVGResponse {
+    let svg_content: String = create_svg("0,2,2,0,0,0", payload.title.as_str());
+    let svg_response = AppResponse {
         status: "201".to_string(),
-        data: payload.into_inner(),
+        data: svg_content,
     };
     HttpResponse::Created().json(svg_response)
 }
