@@ -22,7 +22,7 @@ impl ChordDiagram {
 
     pub fn parse_tab(&mut self, tab_input: &str) -> Result<(), String> {
         let lines: Vec<&str> = tab_input.lines().collect();
-        let mut fret_values = vec![-1; 6];
+        let mut fret_values = vec![-1; 12];
         let mut max_fret = 0;
 
         for line in lines {
@@ -92,15 +92,15 @@ impl ChordDiagram {
         let max_frets = self.frets;
 
         let mut svg = format!(
-            r#"<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 420" width="320" height="420">
+            r#"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320">
   <title>{} Guitar Chord</title>
   
   <!-- Background -->
-  <rect width="320" height="420" fill="white"/>
+  <rect width="320" height="320" fill="white"/>
   
   <!-- Title -->
-  <text x="160" y="30" font-size="18" font-weight="bold" text-anchor="middle" fill="\#333">{}</text>
+  <text x="160" y="270" font-size="18" font-weight="bold" text-anchor="middle" fill='#0066cc'>Chord: {}</text>
   
   <!-- Fret numbers -->
 "#,
@@ -111,7 +111,7 @@ impl ChordDiagram {
         for fret in 1..=max_frets {
             let y = start_y + (fret as f64) * fret_height;
             svg.push_str(&format!(
-                r#"  <text x="30" y="{}" font-size="12" font-weight="bold" text-anchor="right" fill="\#999">{}</text>
+                r#"  <text x="30" y="{}" font-size="12" font-weight="bold" text-anchor="right" fill='#999'>{}</text>
 "#,
                 y + 5.0,
                 fret
@@ -128,7 +128,7 @@ impl ChordDiagram {
         for fret in 0..=max_frets {
             let y = start_y + (fret as f64) * fret_height;
             svg.push_str(&format!(
-                r#"  <line x1="{}" y1="{}" x2="{}" y2="{}" stroke="\#333" stroke-width="2"/>
+                r#"  <line x1="{}" y1="{}" x2="{}" y2="{}" stroke='#333' stroke-width="2"/>
             "#,
                 start_x,
                 y,
@@ -147,7 +147,7 @@ impl ChordDiagram {
         for string in 0..6 {
             let x = start_x + (string as f64) * string_spacing;
             svg.push_str(&format!(
-                r#"  <line x1="{}" y1="{}" x2="{}" y2="{}" stroke="\#333" stroke-width="2"/>
+                r#"  <line x1="{}" y1="{}" x2="{}" y2="{}" stroke='#333' stroke-width="2"/>
             "#,
                 x,
                 start_y,
@@ -156,7 +156,7 @@ impl ChordDiagram {
             ));
 
             svg.push_str(&format!(
-                r#"  <text x="{}" y="{}" font-size="14" font-weight="bold" text-anchor="middle" fill="\#333">{}</text>
+                r#"  <text x="{}" y="{}" font-size="14" font-weight="bold" text-anchor="middle" fill='#333'>{}</text>
 "#,
                 x,
                 start_y - 15.0,
@@ -178,7 +178,7 @@ impl ChordDiagram {
                 // Filled circle for pressed fret
                 let y = start_y + (fret as f64 - 0.5) * fret_height;
                 svg.push_str(&format!(
-                    r#"  <circle cx="{}" cy="{}" r="10" fill="\#0066cc"/>
+                    r#"  <circle cx="{}" cy="{}" r="10" fill='#0066cc'/>
                 "#,
                     x, y
                 ));
@@ -190,16 +190,16 @@ impl ChordDiagram {
                 ));
             } else if fret == 0 {
                 // Open string indicator
-                svg.push_str(&format!(
-                    r#"  <circle cx="{}" cy="{}" r="7" fill="none" stroke="\#00aa00" stroke-width="2"/>
-"#,
-                    x,
-                    start_y - 25.0
-                ));
+                //                 svg.push_str(&format!(
+                //                     r#"  <circle cx="{}" cy="{}" r="7" fill="none" stroke='#00aa00' stroke-width="2"/>
+                // "#,
+                //                     x,
+                //                     start_y - 25.0
+                //                 ));
             } else {
                 // Muted string indicator
                 svg.push_str(&format!(
-                    r#"  <text x="{}" y="{}" font-size="14" font-weight="bold" text-anchor="middle" fill="\#cc0000">×</text>
+                    r#"  <text x="{}" y="{}" font-size="14" font-weight="bold" text-anchor="middle" fill='#cc0000'>×</text>
 "#,
                     x,
                     start_y - 18.0

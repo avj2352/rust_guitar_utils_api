@@ -58,17 +58,15 @@ async fn greet(req: HttpRequest) -> impl Responder {
     path = "/guitar/utils/gen_svg",
     request_body = CreateGuitarSVGRequest,
     responses(
-    (status = 201, description = "Generate Guitar SVG", body = AppResponse)
+        (status = 201, description = "Generate Guitar SVG", body = String, content_type = "image/svg+xml")
     )
 )]
 #[post("/guitar/utils/gen_svg")]
 async fn gen_svg_chord(payload: web::Json<CreateGuitarSVGRequest>) -> impl Responder {
-    let svg_content: String = create_svg("0,2,2,0,0,0", payload.title.as_str());
-    let svg_response = AppResponse {
-        status: "201".to_string(),
-        data: svg_content,
-    };
-    HttpResponse::Created().json(svg_response)
+    let svg_content: String = create_svg(payload.tab.as_str(), payload.title.as_str());
+    HttpResponse::Created()
+        .content_type("image/svg+xml")
+        .body(svg_content)
 }
 
 // OpenAPI Documentation
