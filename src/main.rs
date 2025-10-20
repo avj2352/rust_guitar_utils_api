@@ -3,12 +3,13 @@ mod models;
 mod util;
 
 // ..web service
-use actix_web::{get, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use scalar_doc::scalar_actix;
 use util::helper::json_to_yaml;
 use utoipa::OpenApi;
 // ..custom
-use crate::dto::response::{AppResponse, HealthResponse, UserResponse};
+use crate::dto::request::CreateGuitarSVGRequest;
+use crate::dto::response::{AppResponse, GuitarSVGResponse, HealthResponse, UserResponse};
 
 // Health Check Endpoint
 #[utoipa::path(
@@ -27,13 +28,13 @@ async fn health_check() -> impl Responder {
     })
 }
 
-// Example of a URI
+// Sample URI GET request
 #[utoipa::path(
     get,
     tag = "health",
     path = "/greet/{name}",
     responses(
-        (status = 200, description = "Health check which accepts a uri value", body = AppResponse)
+        (status = 200, description = "sample GET request which accepts a URI parameter", body = AppResponse)
     ),
     params(
         ("name" = String, Path, description = "Name to greet")
@@ -48,18 +49,38 @@ async fn greet(req: HttpRequest) -> impl Responder {
     })
 }
 
+// Guitar collection
+#[utoipa::path(
+    post,
+    tag = "guitar",
+    path = "/guitar/utils/gen_svg",
+    request_body = CreateGuitarSVGRequest,
+    responses(
+    (status = 201, description = "Generate Guitar SVG", body = GuitarSVGResponse)
+    )
+)]
+#[post("/guitar/utils/gen_svg")]
+async fn gen_svg_chord(payload: web::Json<CreateGuitarSVGRequest>) -> impl Responder {
+    let svg_response = GuitarSVGResponse {
+        status: "201".to_string(),
+        data: payload.into_inner(),
+    };
+    HttpResponse::Created().json(svg_response)
+}
+
 // OpenAPI Documentation
 #[derive(utoipa::OpenApi)]
 #[openapi(
     paths(
         health_check,
         greet,
+        gen_svg_chord,
     ),
-    components(schemas(HealthResponse, AppResponse, UserResponse)),
+    components(schemas(HealthResponse, AppResponse, UserResponse, GuitarSVGResponse, CreateGuitarSVGRequest)),
     tags(
         (name = "health", description = "Health check endpoint."),
         (name = "greet", description = "Greet user endpoint."),
-        (name = "users", description = "User management endpoints.")
+        (name = "guitar", description = "collection of guitar utils api endpoints")
     )
 )]
 struct ApiDoc;
@@ -100,6 +121,7 @@ async fn main() -> std::io::Result<()> {
             // endpoints
             .service(health_check)
             .service(greet)
+            .service(gen_svg_chord)
             // docs
             .service(docs)
             .service(openapi_json)

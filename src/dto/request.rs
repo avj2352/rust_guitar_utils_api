@@ -9,6 +9,14 @@ pub struct CreateUserJSONRequest {
     pub email: String,
 }
 
+#[derive(Serialize, Deserialize, Clone, utoipa::ToSchema)]
+pub struct CreateGuitarSVGRequest {
+    #[schema(example = "Em")]
+    pub title: String,
+    #[schema(example = "022000")]
+    pub tab: String,
+}
+
 #[derive(Serialize, Deserialize, utoipa::ToSchema)]
 pub struct CreateUserFormRequest {
     #[schema(example = "John Doe")]
