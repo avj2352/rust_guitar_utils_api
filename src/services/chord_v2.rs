@@ -37,9 +37,11 @@ impl ChordDiagram {
             // Count dashes to detect fret position
             let chars: Vec<&str> = line.split(',').collect();
             let mut string_idx = 0;
+
+            #[allow(unused_assignments)]
             let mut current_fret = -1;
 
-            for (_idx, &ch) in chars.iter().enumerate() {
+            for &ch in chars.iter() {
                 match ch.trim() {
                     "E" | "e" => {
                         string_idx = if string_idx == 0 { 0 } else { 5 };
@@ -79,8 +81,7 @@ impl ChordDiagram {
         let parts: Vec<&str> = fingering_str.split(',').collect();
         self.fingering = parts
             .iter()
-            .enumerate()
-            .map(|(i, s)| s.trim().parse::<i32>().unwrap_or(0))
+            .map(|s| s.trim().parse::<i32>().unwrap_or(0))
             .collect();
 
         if self.fingering.len() < 6 {
