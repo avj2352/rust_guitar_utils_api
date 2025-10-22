@@ -20,14 +20,13 @@ impl ChordDiagram {
             fingering: vec![0, 0, 0, 0, 0, 0],
             frets: 12,
             max_fret: 0,
-            min_fret: f64::INFINITY as i32,
+            min_fret: i32::MAX,
         }
     }
 
     pub fn parse_tab(&mut self, tab_input: &str) {
         let lines: Vec<&str> = tab_input.lines().collect();
         let mut fret_values = vec![-1; 12];
-        let mut max_fret = 0;
 
         for line in lines {
             let line = line.trim();
@@ -36,27 +35,28 @@ impl ChordDiagram {
             }
 
             // Count dashes to detect fret position
-            let chars: Vec<char> = line.chars().collect();
+            let chars: Vec<&str> = line.split(',').collect();
             let mut string_idx = 0;
             let mut current_fret = -1;
 
             for (_idx, &ch) in chars.iter().enumerate() {
-                match ch {
-                    'E' | 'e' => {
+                match ch.trim() {
+                    "E" | "e" => {
                         string_idx = if string_idx == 0 { 0 } else { 5 };
                     }
-                    'A' | 'a' => string_idx = 1,
-                    'D' | 'd' => string_idx = 2,
-                    'G' | 'g' => string_idx = 3,
-                    'B' | 'b' => string_idx = 4,
-                    '0'..='9' => {
-                        current_fret = ch.to_digit(10).unwrap_or(0) as i32;
-                        if current_fret > 0 {
-                            self.max_fret = self.max_fret.max(current_fret);
-                            self.min_fret = self.min_fret.min(current_fret);
+                    "A" | "a" => string_idx = 1,
+                    "D" | "d" => string_idx = 2,
+                    "G" | "g" => string_idx = 3,
+                    "B" | "b" => string_idx = 4,
+                    s => {
+                        if let Ok(fret) = s.parse::<i32>() {
+                            current_fret = fret;
+                            if current_fret > 0 {
+                                self.max_fret = self.max_fret.max(current_fret);
+                                self.min_fret = self.min_fret.min(current_fret);
+                            }
                         }
                     }
-                    _ => {}
                 }
             }
 
@@ -94,20 +94,25 @@ impl ChordDiagram {
         let string_spacing = 40.0;
         let fret_height = 40.0;
 
+        // SVG Viewbox, Window, Chord Name
         let mut svg = format!(
             r#"
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 {}" width="320" height="{}">
   <title>{} Guitar Chord</title>
   
   <!-- Background -->
-  <rect width="320" height="320" fill="white"/>
+  <rect width="320" height="{}" fill="white"/>
   
   <!-- Title -->
-  <text x="160" y="270" font-size="18" font-weight="bold" text-anchor="middle" fill='#0066cc'>Chord: {}</text>
+  <text x="160" y="20" font-size="18" font-weight="bold" text-anchor="middle" fill='#0066cc'>Chord: {}</text>
   
   <!-- Fret numbers -->
 "#,
-            chord_name, chord_name
+            (120 + self.max_fret * fret_height as i32),
+            (120 + self.max_fret * fret_height as i32),
+            chord_name,
+            (120 + self.max_fret * fret_height as i32),
+            chord_name
         );
 
         // Fret numbers
