@@ -11,7 +11,7 @@ use utoipa::OpenApi;
 // ..custom
 use crate::dto::request::CreateGuitarSVGRequest;
 use crate::dto::response::{AppResponse, GuitarSVGResponse, HealthResponse, UserResponse};
-use crate::services::chord::create_svg;
+use crate::services::chord_v2::create_svg;
 
 // Health Check Endpoint
 #[utoipa::path(
