@@ -109,8 +109,10 @@ async fn openapi_yaml() -> impl Responder {
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let host = "127.0.0.1";
-    let port = 8080;
+    let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let port: u16 = port.parse().expect("PORT must be a number");
+
     println!("server is running at: http://{}:{}/docs", &host, &port);
     HttpServer::new(|| {
         App::new()
