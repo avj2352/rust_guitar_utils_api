@@ -1,7 +1,7 @@
 [package]
 name = "rust_guitar_utils_api"
 description = "RESTful webservice to provide guitar utils for guitar apps & web client"
-version = "0.1.1"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]

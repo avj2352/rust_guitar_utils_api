@@ -91,18 +91,18 @@ impl ChordDiagram {
 
     pub fn to_svg(&self, chord_name: &str) -> String {
         let start_x = 50.0;
-        let start_y = 50.0;
+        let start_y = 70.0;
         let string_spacing = 40.0;
         let fret_height = 40.0;
 
         // SVG Viewbox, Window, Chord Name
         let mut svg = format!(
             r#"
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 {}" width="320" height="{}">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 {}" width="320" height="{}">
   <title>{} Guitar Chord</title>
   
   <!-- Background -->
-  <rect width="320" height="{}" fill="white"/>
+  <rect width="300" height="{}" fill="white"/>
   
   <!-- Title -->
   <text x="160" y="20" font-size="18" font-weight="bold" text-anchor="middle" fill='#0066cc'>Chord: {}</text>
