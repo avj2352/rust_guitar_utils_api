@@ -1,14 +1,5 @@
-use crate::models::user::UserModel;
-use serde::{Deserialize, Serialize};
 use super::request::CreateGuitarSVGRequest;
-
-// User model for API
-#[derive(Serialize, Deserialize, Clone, utoipa::ToSchema)]
-pub struct UserResponse {
-    #[schema(example = "200")]
-    pub status: String,
-    pub user: UserModel,
-}
+use serde::{Deserialize, Serialize};
 
 // App Response
 #[derive(Serialize, Deserialize, Clone, utoipa::ToSchema)]

@@ -1,16 +1,15 @@
 mod dto;
-mod models;
 mod services;
 mod util;
 
 // ..web service
-use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use scalar_doc::scalar_actix;
 use util::helper::json_to_yaml;
 use utoipa::OpenApi;
 // ..custom
 use crate::dto::request::CreateGuitarSVGRequest;
-use crate::dto::response::{AppResponse, GuitarSVGResponse, HealthResponse, UserResponse};
+use crate::dto::response::{AppResponse, GuitarSVGResponse, HealthResponse};
 use crate::services::chord_v2::create_svg;
 
 // Health Check Endpoint
@@ -34,20 +33,16 @@ async fn health_check() -> impl Responder {
 #[utoipa::path(
     get,
     tag = "health",
-    path = "/greet/{name}",
+    path = "/about",
     responses(
-        (status = 200, description = "sample GET request which accepts a URI parameter", body = AppResponse)
+        (status = 200, description = "about the webservice", body = AppResponse)
     ),
-    params(
-        ("name" = String, Path, description = "Name to greet")
-    )
 )]
-#[get("/greet/{name}")]
-async fn greet(req: HttpRequest) -> impl Responder {
-    let name = req.match_info().get("name").unwrap_or("world");
+#[get("/about")]
+async fn about_webservice() -> impl Responder {
     HttpResponse::Ok().json(AppResponse {
         status: "200".to_string(),
-        data: format!("Hello {}!", &name),
+        data: format!("Microservice to render guitar tabs into SVG frames"),
     })
 }
 
@@ -58,7 +53,7 @@ async fn greet(req: HttpRequest) -> impl Responder {
     path = "/guitar/utils/gen_svg",
     request_body = CreateGuitarSVGRequest,
     responses(
-        (status = 201, description = "Generate Guitar SVG", body = String, content_type = "image/svg+xml")
+        (status = 201, description = "generate svg frame based on guitar tab annotation", body = String, content_type = "image/svg+xml")
     )
 )]
 #[post("/guitar/utils/gen_svg")]
@@ -74,13 +69,13 @@ async fn gen_svg_chord(payload: web::Json<CreateGuitarSVGRequest>) -> impl Respo
 #[openapi(
     paths(
         health_check,
-        greet,
+        about_webservice,
         gen_svg_chord,
     ),
-    components(schemas(HealthResponse, AppResponse, UserResponse, GuitarSVGResponse, CreateGuitarSVGRequest)),
+    components(schemas(HealthResponse, AppResponse, GuitarSVGResponse, CreateGuitarSVGRequest)),
     tags(
         (name = "health", description = "Health check endpoint."),
-        (name = "greet", description = "Greet user endpoint."),
+        (name = "about", description = "about webservice"),
         (name = "guitar", description = "collection of guitar utils api endpoints")
     )
 )]
@@ -121,7 +116,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // endpoints
             .service(health_check)
-            .service(greet)
+            .service(about_webservice)
             .service(gen_svg_chord)
             // docs
             .service(docs)
