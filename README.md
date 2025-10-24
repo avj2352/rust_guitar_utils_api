@@ -4,6 +4,7 @@ Actix Webserver to provide Guitar utils for soullyrics apps
 
 ## Important Links
 
+- [SVG Viewer](https://www.svgviewer.dev/)
 - [Create Rust Actix webserver docker build](https://www.perplexity.ai/search/create-a-dockerfile-for-deploy-yJqhuM5ZRCKMevj_hNdcXQ#0)
 - [POC using Claude code](https://claude.ai/share/b2b2c53b-d427-41a7-be88-0555cc09bddc)
 - [Rust Zero to Prod Github repo](https://github.com/avj2352/rust_zero_to_prod)
