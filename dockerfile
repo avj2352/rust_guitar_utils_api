@@ -1,5 +1,5 @@
 # Use the official Rust image as the build environment
-FROM rust:1.81 as builder
+FROM rust:1.85 as builder
 
 # Set the working directory
 WORKDIR /app
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 WORKDIR /app
 
 # Copy the compiled binary from the builder stage
-COPY --from=builder /app/target/release/app /app/app
+COPY --from=builder /app/target/release/rust_guitar_utils_api /app/rust_guitar_utils_api
 
 # Expose the port the Actix server will run on
 EXPOSE 8080
@@ -33,5 +33,5 @@ ENV HOST=0.0.0.0
 ENV PORT=8080
 
 # Run the application
-CMD ["/app/app"]
+CMD ["/app/rust_guitar_utils_api"]
 

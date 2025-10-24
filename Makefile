@@ -42,5 +42,11 @@ server:
 release:
 	cargo build --release
 
-dev: format lint test run
-deploy: format lint test release
+build:
+	@echo 'creating docker build - actix-app...'
+	docker build -t actix-app .
+
+docker:
+	@echo 'running docker image http://localhost:8080/docs'
+	docker run -p 8080:8080 actix-app
+	
